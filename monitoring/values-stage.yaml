@@ -4,21 +4,11 @@ kube-prometheus-stack:
     prometheusSpec:
       retention: 15d
       serviceMonitorSelectorNilUsesHelmValues: false
-      resources:
-        requests:
-          memory: "512Mi"
-          cpu: "250m"
-        limits:
-          memory: "1Gi"
-          cpu: "1000m"
   grafana:
     enabled: true
-    adminPassword: prom-operator
+    adminPassword: changeme
     persistence:
       enabled: true
-      size: 10Gi
-  alertmanager:
-    enabled: true
 
 sloRules:
   enabled: true

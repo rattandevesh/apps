@@ -1,0 +1,34 @@
+name: Helm Package
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/Chart.yaml'
+      - '**/values.yaml'
+      - '**/templates/**'
+
+jobs:
+  helm-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'v3.13.0'
+
+      - name: Package Charts
+        run: |
+          for chart in ui catalog cart orders checkout platform monitoring; do
+            helm package ./$chart
+          done
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: helm-charts
+          path: '*.tgz'

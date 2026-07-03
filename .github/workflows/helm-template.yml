@@ -1,0 +1,30 @@
+name: Helm Template
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/Chart.yaml'
+      - '**/values.yaml'
+      - '**/templates/**'
+
+jobs:
+  helm-template:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        chart: [ui, catalog, cart, orders, checkout, platform, monitoring]
+        environment: [dev, stage, prod]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'v3.13.0'
+
+      - name: Template Chart
+        run: |
+          helm template ${{ matrix.chart }} ./${{ matrix.chart }} -f ./${{ matrix.chart }}/values-${{ matrix.environment }}.yaml --debug

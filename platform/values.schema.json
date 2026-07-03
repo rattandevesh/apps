@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "redis": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"}
+      }
+    },
+    "postgresql": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"}
+      }
+    },
+    "ingressClass": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "name": {"type": "string"}
+      }
+    }
+  }
+}

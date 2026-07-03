@@ -1,9 +1,5 @@
-# Default values for platform chart
-
-# Namespace configuration
 namespace: platform
 
-# Redis configuration
 redis:
   enabled: true
   architecture: standalone
@@ -19,7 +15,6 @@ redis:
       memory: "512Mi"
       cpu: "500m"
 
-# PostgreSQL configuration
 postgresql:
   enabled: true
   auth:
@@ -35,18 +30,15 @@ postgresql:
       memory: "1Gi"
       cpu: "1000m"
 
-# Monitoring stack
-monitoring:
+ingressClass:
   enabled: true
-  prometheus:
-    enabled: true
-    retention: 15d
-  grafana:
-    enabled: true
-    persistence:
-      enabled: true
+  name: nginx
 
-# Ingress configuration
+clusterIssuers:
+  enabled: false
+  email: admin@example.com
+  region: us-west-2
+
 ingress:
   enabled: true
   className: nginx

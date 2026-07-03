@@ -1,8 +1,8 @@
 replicaCount: 3
+imageDigest: "sha256:REPLACE_WITH_REAL_DIGEST"
 
 image:
   tag: "1.0.0"
-  imageDigest: "sha256:abc123" # Pin to specific digest
 
 resources:
   requests:

@@ -7,6 +7,11 @@ image:
 
 imageDigest: "" # For digest pinning
 
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
 service:
   type: ClusterIP
   port: 8080

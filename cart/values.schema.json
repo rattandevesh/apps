@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["image", "service"],
+  "properties": {
+    "image": {
+      "type": "object",
+      "required": ["repository"],
+      "properties": {
+        "repository": {"type": "string"},
+        "pullPolicy": {"type": "string"},
+        "tag": {"type": "string"}
+      }
+    },
+    "imageDigest": {"type": "string"},
+    "service": {
+      "type": "object",
+      "required": ["port"],
+      "properties": {
+        "type": {"type": "string"},
+        "port": {"type": "integer"}
+      }
+    },
+    "replicaCount": {"type": "integer"},
+    "autoscaling": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "minReplicas": {"type": "integer"},
+        "maxReplicas": {"type": "integer"},
+        "targetCPUUtilizationPercentage": {"type": "integer"},
+        "targetMemoryUtilizationPercentage": {"type": "integer"}
+      }
+    },
+    "resources": {
+      "type": "object",
+      "properties": {
+        "requests": {
+          "type": "object",
+          "properties": {
+            "memory": {"type": "string"},
+            "cpu": {"type": "string"}
+          }
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "memory": {"type": "string"},
+            "cpu": {"type": "string"}
+          }
+        }
+      }
+    },
+    "ingress": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "className": {"type": "string"},
+        "annotations": {"type": "object"},
+        "hosts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "host": {"type": "string"},
+              "paths": {"type": "array"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

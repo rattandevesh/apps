@@ -1,0 +1,35 @@
+name: Helm Lint
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  helm-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/setup-helm@v3
+        with:
+          version: 'v3.13.0'
+
+      - name: Build chart dependencies
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+          helm dependency build platform
+          helm dependency build monitoring
+
+      - name: Lint all charts
+        run: |
+          for chart in ui catalog cart orders checkout platform monitoring; do
+            echo "=== lint $chart ==="
+            helm lint "$chart"
+          done
+
+      - name: Template smoke test
+        run: |
+          helm template ui ./ui -f ui/values-dev.yaml > /dev/null
+          helm template platform ./platform -f platform/values-dev.yaml > /dev/null

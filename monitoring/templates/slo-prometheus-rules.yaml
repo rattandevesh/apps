@@ -1,9 +1,11 @@
+{{- if .Values.sloRules.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: retail-store-slo
   labels:
-    release: prometheus
+    release: {{ .Release.Name }}
+    app.kubernetes.io/part-of: kube-prometheus-stack
 spec:
   groups:
     - name: retail-store.slo.rules
@@ -98,3 +100,4 @@ spec:
           annotations:
             summary: "SLO budget exhausted"
             description: "Error budget remaining is less than 95% for {{ $labels.job }}"
+{{- end }}
