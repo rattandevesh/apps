@@ -1,0 +1,33 @@
+# Production environment values
+namespace: platform-prod
+
+redis:
+  enabled: true
+  architecture: replication
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+
+postgresql:
+  enabled: true
+  primary:
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "2000m"
+
+monitoring:
+  enabled: true
+  prometheus:
+    retention: 30d
+
+ingress:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod

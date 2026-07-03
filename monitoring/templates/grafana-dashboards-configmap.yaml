@@ -1,0 +1,127 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  labels:
+    grafana_dashboard: "1"
+data:
+  retail-store-overview.json: |
+    {
+      "dashboard": {
+        "title": "Retail Store Overview",
+        "panels": [
+          {
+            "title": "Request Rate",
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_total{job=~\"retail-store-.*\"}[5m])) by (job)"
+              }
+            ]
+          },
+          {
+            "title": "Error Rate",
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_total{job=~\"retail-store-.*\",status=~\"5..\"}[5m])) by (job)"
+              }
+            ]
+          },
+          {
+            "title": "P99 Latency",
+            "targets": [
+              {
+                "expr": "service:request_latency:p99"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  api-latency.json: |
+    {
+      "dashboard": {
+        "title": "API Latency",
+        "panels": [
+          {
+            "title": "P50 Latency",
+            "targets": [
+              {
+                "expr": "service:request_latency:p50"
+              }
+            ]
+          },
+          {
+            "title": "P95 Latency",
+            "targets": [
+              {
+                "expr": "service:request_latency:p95"
+              }
+            ]
+          },
+          {
+            "title": "P99 Latency",
+            "targets": [
+              {
+                "expr": "service:request_latency:p99"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  error-rate.json: |
+    {
+      "dashboard": {
+        "title": "Error Rate",
+        "panels": [
+          {
+            "title": "Success Rate",
+            "targets": [
+              {
+                "expr": "service:request_success_rate:5m"
+              }
+            ]
+          },
+          {
+            "title": "Error Rate by Service",
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_total{job=~\"retail-store-.*\",status=~\"5..\"}[5m])) by (job)"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  hpa-scaling.json: |
+    {
+      "dashboard": {
+        "title": "HPA Scaling Activity",
+        "panels": [
+          {
+            "title": "Replica Count",
+            "targets": [
+              {
+                "expr": "kube_deployment_status_replicas{deployment=~\"retail-store-.*\"}"
+              }
+            ]
+          },
+          {
+            "title": "CPU Utilization",
+            "targets": [
+              {
+                "expr": "rate(container_cpu_usage_seconds_total{pod=~\"retail-store-.*\"}[5m])"
+              }
+            ]
+          },
+          {
+            "title": "Memory Utilization",
+            "targets": [
+              {
+                "expr": "container_memory_usage_bytes{pod=~\"retail-store-.*\"}"
+              }
+            ]
+          }
+        ]
+      }
+    }

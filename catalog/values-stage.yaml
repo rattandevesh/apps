@@ -1,0 +1,26 @@
+replicaCount: 2
+
+image:
+  tag: "1.0.0"
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 8
+
+ingress:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: catalog.stage.example.internal
+      paths:
+        - path: /catalog
+          pathType: Prefix

@@ -1,0 +1,100 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: retail-store-slo
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: retail-store.slo.rules
+      rules:
+        # API Success Rate SLO
+        - record: service:request_success_rate
+          expr: |
+            sum(rate(http_requests_total{job=~"retail-store-.*",status!~"5.."}[5m]))
+            /
+            sum(rate(http_requests_total{job=~"retail-store-.*"}[5m]))
+        - record: service:request_success_rate:5m
+          expr: |
+            sum(rate(http_requests_total{job=~"retail-store-.*",status!~"5.."}[5m]))
+            /
+            sum(rate(http_requests_total{job=~"retail-store-.*"}[5m]))
+        - record: service:request_success_rate:30m
+          expr: |
+            sum(rate(http_requests_total{job=~"retail-store-.*",status!~"5.."}[30m]))
+            /
+            sum(rate(http_requests_total{job=~"retail-store-.*"}[30m]))
+        - record: service:request_success_rate:1h
+          expr: |
+            sum(rate(http_requests_total{job=~"retail-store-.*",status!~"5.."}[1h]))
+            /
+            sum(rate(http_requests_total{job=~"retail-store-.*"}[1h]))
+
+        # API Latency SLO
+        - record: service:request_latency:p99
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(http_request_duration_seconds_bucket{job=~"retail-store-.*"}[5m])) by (le, job)
+            )
+        - record: service:request_latency:p95
+          expr: |
+            histogram_quantile(0.95,
+              sum(rate(http_request_duration_seconds_bucket{job=~"retail-store-.*"}[5m])) by (le, job)
+            )
+        - record: service:request_latency:p50
+          expr: |
+            histogram_quantile(0.50,
+              sum(rate(http_request_duration_seconds_bucket{job=~"retail-store-.*"}[5m])) by (le, job)
+            )
+
+        # SLO Burn Rate Alerts
+        - alert: HighErrorRate
+          expr: |
+            service:request_success_rate:5m < 0.95
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High error rate detected"
+            description: "Error rate is {{ $value | humanizePercentage }} for {{ $labels.job }}"
+
+        - alert: CriticalErrorRate
+          expr: |
+            service:request_success_rate:5m < 0.90
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Critical error rate detected"
+            description: "Error rate is {{ $value | humanizePercentage }} for {{ $labels.job }}"
+
+        - alert: HighLatency
+          expr: |
+            service:request_latency:p99 > 1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High latency detected"
+            description: "P99 latency is {{ $value }}s for {{ $labels.job }}"
+
+        - alert: CriticalLatency
+          expr: |
+            service:request_latency:p99 > 2
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Critical latency detected"
+            description: "P99 latency is {{ $value }}s for {{ $labels.job }}"
+
+        # SLO Budget Alert
+        - alert: SLOBudgetExhausted
+          expr: |
+            (1 - service:request_success_rate:30m) > 0.05
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "SLO budget exhausted"
+            description: "Error budget remaining is less than 95% for {{ $labels.job }}"
