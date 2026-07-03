@@ -1,0 +1,17 @@
+# Helm packaged charts (build artifacts)
+**/charts/*.tgz
+
+# Local helm cache
+.helm/
+
+# OS / editor
+.DS_Store
+.idea/
+*.swp
+*.swo
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
