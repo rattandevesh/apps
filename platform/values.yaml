@@ -37,7 +37,7 @@ ingressClass:
 clusterIssuers:
   enabled: false
   email: admin@example.com
-  region: us-west-2
+  region: us-east-1
 
 ingress:
   enabled: true
